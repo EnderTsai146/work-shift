@@ -1,505 +1,489 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.3">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 排班薪資小幫手</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f6f9; padding-bottom: 100px; }
+        .card-shift { border-left: 5px solid #007bff; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; }
+        .card-shift.actual { border-left-color: #28a745; }
+        .wage-text { color: #dc3545; font-weight: bold; }
+        
+        /* 浮動按鈕群組 */
+        .fab-container { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        .btn-float { border-radius: 50%; width: 60px; height: 60px; font-size: 24px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
+        .btn-sub { width: 50px; height: 50px; font-size: 20px; }
+        
+        /* 星期選擇器的樣式 */
+        .week-selector input[type="checkbox"] { display: none; }
+        .week-selector label {
+            display: inline-block; width: 40px; height: 40px; line-height: 40px; text-align: center;
+            border-radius: 50%; border: 1px solid #ced4da; margin: 2px; cursor: pointer; user-select: none;
+        }
+        .week-selector input[type="checkbox"]:checked + label {
+            background-color: #0d6efd; color: white; border-color: #0d6efd;
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="zh-TW"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;2026 排班薪資小幫手&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f6f9; padding-bottom: 100px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-shift { border-left: 5px solid #007bff; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-shift.actual { border-left-color: #28a745; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.wage-text { color: #dc3545; font-weight: bold; }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* 浮動按鈕群組 */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.fab-container { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-float { border-radius: 50%; width: 60px; height: 60px; font-size: 24px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-sub { width: 50px; height: 50px; font-size: 20px; }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* 星期選擇器的樣式 */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.week-selector input[type="checkbox"] { display: none; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.week-selector label {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: inline-block; width: 40px; height: 40px; line-height: 40px; text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 50%; border: 1px solid #ced4da; margin: 2px; cursor: pointer; user-select: none;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.week-selector input[type="checkbox"]:checked + label {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #0d6efd; color: white; border-color: #0d6efd;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="container mt-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h4&gt;&lt;i class="fas fa-calendar-alt"&gt;&lt;/i&gt; 排班與薪資管理&lt;/h4&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-white rounded shadow-sm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-outline-secondary btn-sm" onclick="changeMonth(-1)"&gt;&lt;i class="fas fa-chevron-left"&gt;&lt;/i&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span id="currentMonthLabel" class="h5 m-0 fw-bold"&gt;2026年 01月&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-outline-secondary btn-sm" onclick="changeMonth(1)"&gt;&lt;i class="fas fa-chevron-right"&gt;&lt;/i&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row g-2 mb-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="col-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card p-2 text-center h-100 border-0 shadow-sm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;small class="text-muted"&gt;預估淨領薪資&lt;/small&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h5 class="text-primary fw-bold" id="estNetPay"&gt;$0&lt;/h5&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;small class="text-muted" style="font-size: 0.7em;"&gt;(扣勞保 $&lt;span id="estLabor"&gt;0&lt;/span&gt;)&lt;/small&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="col-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card p-2 text-center h-100 border-0 shadow-sm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;small class="text-muted"&gt;實際應收薪資&lt;/small&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h5 class="text-success fw-bold" id="actNetPay"&gt;$0&lt;/h5&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;small class="text-muted" style="font-size: 0.7em;"&gt;(扣勞保 $&lt;span id="actLabor"&gt;0&lt;/span&gt;)&lt;/small&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="shiftList"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="emptyState" class="text-center text-muted mt-5" style="display:none;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;這個月還沒有班表喔！&lt;br&gt;點擊右下角按鈕開始安排。&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="modal fade" id="shiftModal" tabindex="-1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="modal-dialog modal-dialog-centered"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="modal-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="modal-header"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h5 class="modal-title"&gt;編輯班表&lt;/h5&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button type="button" class="btn-close" data-bs-dismiss="modal"&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="modal-body"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;form id="shiftForm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="hidden" id="shiftId"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="mb-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="form-label"&gt;日期&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="date" class="form-control" id="shiftDate" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;ul class="nav nav-tabs mb-3" id="myTab" role="tablist"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="nav-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;button class="nav-link active" data-bs-toggle="tab" data-bs-target="#est" type="button"&gt;預排班表&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="nav-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;button class="nav-link" data-bs-toggle="tab" data-bs-target="#act" type="button"&gt;實際打卡&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/ul&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="tab-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="tab-pane fade show active" id="est"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="row g-2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="col-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label&gt;預計開始&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="time" class="form-control" id="estStart"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="col-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label&gt;預計結束&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="time" class="form-control" id="estEnd"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="tab-pane fade" id="act"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="alert alert-light border small p-2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>請填寫實際上下班時間，系統將以此計算最終薪資。</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="row g-2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="col-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label&gt;實際上班&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="time" class="form-control" id="actStart"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="col-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label&gt;實際下班&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="time" class="form-control" id="actEnd"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/form&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="modal-footer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button type="button" class="btn btn-danger me-auto" onclick="deleteShift()"&gt;刪除&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button type="button" class="btn btn-primary" onclick="saveShift()"&gt;儲存&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="modal fade" id="batchModal" tabindex="-1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="modal-dialog modal-dialog-centered"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="modal-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="modal-header bg-success text-white"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h5 class="modal-title"&gt;&lt;i class="fas fa-bolt"&gt;&lt;/i&gt; 快速排班&lt;/h5&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="modal-body"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="alert alert-success small p-2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>選擇日期範圍與星期，一次產生多筆班表。</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;form id="batchForm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="mb-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="form-label"&gt;日期範圍&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="input-group"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="date" class="form-control" id="batchStartDate" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="input-group-text"&gt;至&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="date" class="form-control" id="batchEndDate" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="mb-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="form-label d-block"&gt;重複星期 (可多選)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="week-selector d-flex justify-content-center flex-wrap"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="checkbox" id="w1" value="1"&gt;&lt;label for="w1"&gt;一&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="checkbox" id="w2" value="2"&gt;&lt;label for="w2"&gt;二&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="checkbox" id="w3" value="3"&gt;&lt;label for="w3"&gt;三&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="checkbox" id="w4" value="4"&gt;&lt;label for="w4"&gt;四&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="checkbox" id="w5" value="5"&gt;&lt;label for="w5"&gt;五&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="checkbox" id="w6" value="6"&gt;&lt;label for="w6"&gt;六&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="checkbox" id="w0" value="0"&gt;&lt;label for="w0"&gt;日&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="mb-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="form-label"&gt;固定班別時間&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="row g-2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="col-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="small text-muted"&gt;開始&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="time" class="form-control" id="batchStartTime" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="col-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="small text-muted"&gt;結束&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="time" class="form-control" id="batchEndTime" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/form&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="modal-footer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;取消&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button type="button" class="btn btn-success" onclick="executeBatch()"&gt;開始產生&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="fab-container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn btn-success btn-float btn-sub" onclick="openBatchModal()" title="快速排班"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;i class="fas fa-bolt"&gt;&lt;/i&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn btn-primary btn-float" onclick="openAddModal()" title="新增一筆"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;i class="fas fa-plus"&gt;&lt;/i&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/button&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// --- 系統參數 ---</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const HOURLY_WAGE = 196;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const BREAK_THRESHOLD = 4.5;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const BREAK_DEDUCTION = 0.5;<span class="Apple-converted-space"> </span></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// 2026 勞保級距表 (部分工時模擬)</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function calculateLaborInsurance(monthlyTotal) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (monthlyTotal &lt;= 0) return 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let insuredSalary = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (monthlyTotal &lt;= 11100) insuredSalary = 11100;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (monthlyTotal &lt;= 12540) insuredSalary = 12540;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (monthlyTotal &lt;= 13500) insuredSalary = 13500;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (monthlyTotal &lt;= 15840) insuredSalary = 15840;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (monthlyTotal &lt;= 16500) insuredSalary = 16500;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (monthlyTotal &lt;= 17280) insuredSalary = 17280;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (monthlyTotal &lt;= 17880) insuredSalary = 17880;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (monthlyTotal &lt;= 19047) insuredSalary = 19047;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else if (monthlyTotal &lt;= 20008) insuredSalary = 20008;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else insuredSalary = Math.ceil(monthlyTotal / 1000) * 1000;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 費率 12% * 自付 20%</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return Math.round(insuredSalary * 0.12 * 0.2);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// --- 資料與狀態 ---</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let shifts = JSON.parse(localStorage.getItem('shifts_2026')) || [];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let currentYear = 2026;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let currentMonth = 0; // 0 = Jan</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.addEventListener('DOMContentLoaded', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const today = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(today.getFullYear() &lt; 2026) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentYear = 2026;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentMonth = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentYear = today.getFullYear();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentMonth = today.getMonth();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderCalendar();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function changeMonth(delta) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>currentMonth += delta;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (currentMonth &gt; 11) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentMonth = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentYear++;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>} else if (currentMonth &lt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentMonth = 11;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentYear--;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderCalendar();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// 計算函數</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function calcPay(startStr, endStr) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (!startStr || !endStr) return { hours: 0, pay: 0, billableHours: 0 };</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const start = new Date(`2000-01-01T${startStr}`);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let end = new Date(`2000-01-01T${endStr}`);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (end &lt; start) end.setDate(end.getDate() + 1);</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let diffMs = end - start;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let hours = diffMs / (1000 * 60 * 60);</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const deductionCount = Math.floor(hours / BREAK_THRESHOLD);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const deductionHours = deductionCount * BREAK_DEDUCTION;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const billableHours = hours - deductionHours;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>return {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>billableHours: billableHours,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>pay: Math.round(billableHours * HOURLY_WAGE)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function renderCalendar() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('currentMonthLabel').innerText = `${currentYear}年 ${(currentMonth + 1).toString().padStart(2, '0')}月`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const listContainer = document.getElementById('shiftList');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const emptyState = document.getElementById('emptyState');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>listContainer.innerHTML = '';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const monthlyShifts = shifts.filter(s =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const d = new Date(s.date);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return d.getFullYear() === currentYear &amp;&amp; d.getMonth() === currentMonth;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 排序：日期 -&gt; 開始時間</p>
-<p class="p1"><span class="Apple-converted-space">        </span>monthlyShifts.sort((a, b) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (a.date !== b.date) return new Date(a.date) - new Date(b.date);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return (a.estStart || '00:00').localeCompare(b.estStart || '00:00');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (monthlyShifts.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>emptyState.style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>emptyState.style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let totalEstPay = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let totalActPay = 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>monthlyShifts.forEach(shift =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const est = calcPay(shift.estStart, shift.estEnd);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const act = calcPay(shift.actStart, shift.actEnd);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>totalEstPay += est.pay;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (shift.actStart &amp;&amp; shift.actEnd) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>totalActPay += act.pay;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const dayName = new Date(shift.date).toLocaleDateString('zh-TW', { weekday: 'short' });</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const isDone = (shift.actStart &amp;&amp; shift.actEnd);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const cardClass = isDone ? 'card-shift actual' : 'card-shift';</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>let html = `</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="card ${cardClass} p-3" onclick="editShift('${shift.id}')"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="d-flex justify-content-between align-items-center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h5 class="m-0"&gt;${shift.date.substring(5)} (${dayName})&lt;/h5&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;small class="text-muted"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>預排: ${shift.estStart || '--'} ~ ${shift.estEnd || '--'}<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="badge bg-light text-dark"&gt;計 ${est.billableHours.toFixed(1)}hr&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/small&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>${isDone ? `&lt;div class="mt-1"&gt;&lt;small class="text-success fw-bold"&gt;&lt;i class="fas fa-check"&gt;&lt;/i&gt; 實際: ${shift.actStart} ~ ${shift.actEnd}&lt;/small&gt;&lt;/div&gt;` : ''}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-end"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="wage-text fs-5"&gt;$${isDone ? act.pay : est.pay}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>listContainer.innerHTML += html;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const estLabor = calculateLaborInsurance(totalEstPay);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const actLabor = calculateLaborInsurance(totalActPay);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('estNetPay').innerText = `$${totalEstPay - estLabor}`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('estLabor').innerText = estLabor;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('actNetPay').innerText = `$${totalActPay - actLabor}`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('actLabor').innerText = actLabor;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Modal 與 資料操作</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const shiftModal = new bootstrap.Modal(document.getElementById('shiftModal'));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const batchModal = new bootstrap.Modal(document.getElementById('batchModal'));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let editingId = null;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function openAddModal() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>editingId = null;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('shiftForm').reset();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('shiftId').value = '';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('shiftDate').valueAsDate = new Date(); // 預設今天</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 切換到預排分頁</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const firstTabEl = document.querySelector('#myTab button[data-bs-target="#est"]');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>bootstrap.Tab.getInstance(firstTabEl)?.show() || new bootstrap.Tab(firstTabEl).show();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.querySelector('.btn-danger').style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>shiftModal.show();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function editShift(id) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>editingId = id;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const shift = shifts.find(s =&gt; s.id === id);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (!shift) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('shiftId').value = shift.id;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('shiftDate').value = shift.date;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('estStart').value = shift.estStart || '';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('estEnd').value = shift.estEnd || '';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('actStart').value = shift.actStart || '';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('actEnd').value = shift.actEnd || '';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.querySelector('.btn-danger').style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>shiftModal.show();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function saveShift() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const date = document.getElementById('shiftDate').value;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(!date) return alert('請選擇日期');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const data = {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>id: editingId || Date.now().toString(),</p>
-<p class="p1"><span class="Apple-converted-space">            </span>date: date,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>estStart: document.getElementById('estStart').value,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>estEnd: document.getElementById('estEnd').value,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>actStart: document.getElementById('actStart').value,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>actEnd: document.getElementById('actEnd').value</p>
-<p class="p1"><span class="Apple-converted-space">        </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (editingId) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const index = shifts.findIndex(s =&gt; s.id === editingId);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>shifts[index] = data;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>shifts.push(data);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>localStorage.setItem('shifts_2026', JSON.stringify(shifts));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>shiftModal.hide();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderCalendar();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function deleteShift() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (!editingId) return;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (!confirm('確定要刪除這個班表嗎？')) return;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>shifts = shifts.filter(s =&gt; s.id !== editingId);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>localStorage.setItem('shifts_2026', JSON.stringify(shifts));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>shiftModal.hide();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderCalendar();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// --- 快速排班 (Batch) 邏輯 ---</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function openBatchModal() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('batchForm').reset();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 預設日期範圍為當前顯示月份的第一天到最後一天</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const firstDay = new Date(currentYear, currentMonth, 1);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const lastDay = new Date(currentYear, currentMonth + 1, 0);</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 格式化為 yyyy-mm-dd</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const formatDate = (d) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let month = '' + (d.getMonth() + 1), day = '' + d.getDate(), year = d.getFullYear();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (month.length &lt; 2) month = '0' + month;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (day.length &lt; 2) day = '0' + day;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return [year, month, day].join('-');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('batchStartDate').value = formatDate(firstDay);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('batchEndDate').value = formatDate(lastDay);</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>batchModal.show();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function executeBatch() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const startStr = document.getElementById('batchStartDate').value;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const endStr = document.getElementById('batchEndDate').value;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const startTime = document.getElementById('batchStartTime').value;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const endTime = document.getElementById('batchEndTime').value;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (!startStr || !endStr || !startTime || !endTime) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>alert('請完整填寫日期範圍與時間');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// 取得勾選的星期</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const selectedDays = []; // 0=Sun, 1=Mon...</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.querySelectorAll('.week-selector input:checked').forEach(el =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>selectedDays.push(parseInt(el.value));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (selectedDays.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>alert('請至少勾選一個星期');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (!confirm(`確定要產生從 ${startStr} 到 ${endStr} 的班表嗎？`)) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let curr = new Date(startStr);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let end = new Date(endStr);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let count = 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>while (curr &lt;= end) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (selectedDays.includes(curr.getDay())) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>// 格式化日期 yyyy-mm-dd</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let month = '' + (curr.getMonth() + 1), day = '' + curr.getDate(), year = curr.getFullYear();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (month.length &lt; 2) month = '0' + month;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (day.length &lt; 2) day = '0' + day;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const dateStr = [year, month, day].join('-');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>// 建立新班表</p>
-<p class="p1"><span class="Apple-converted-space">                </span>shifts.push({</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>id: Date.now().toString() + Math.random().toString().substr(2, 5), // 避免ID重複</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>date: dateStr,</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>estStart: startTime,</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>estEnd: endTime,</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>actStart: '',</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>actEnd: ''</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>count++;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>curr.setDate(curr.getDate() + 1);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>localStorage.setItem('shifts_2026', JSON.stringify(shifts));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>batchModal.hide();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderCalendar();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert(`已成功新增 ${count} 筆班表！`);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+<div class="container mt-3">
+    <h4><i class="fas fa-calendar-alt"></i> 排班與薪資管理</h4>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-white rounded shadow-sm">
+        <button class="btn btn-outline-secondary btn-sm" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+        <span id="currentMonthLabel" class="h5 m-0 fw-bold">2026年 01月</span>
+        <button class="btn btn-outline-secondary btn-sm" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <div class="row g-2 mb-3">
+        <div class="col-6">
+            <div class="card p-2 text-center h-100 border-0 shadow-sm">
+                <small class="text-muted">預估淨領薪資</small>
+                <h5 class="text-primary fw-bold" id="estNetPay">$0</h5>
+                <small class="text-muted" style="font-size: 0.7em;">(扣勞保 $<span id="estLabor">0</span>)</small>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card p-2 text-center h-100 border-0 shadow-sm">
+                <small class="text-muted">實際應收薪資</small>
+                <h5 class="text-success fw-bold" id="actNetPay">$0</h5>
+                <small class="text-muted" style="font-size: 0.7em;">(扣勞保 $<span id="actLabor">0</span>)</small>
+            </div>
+        </div>
+    </div>
+
+    <div id="shiftList">
+        </div>
+    
+    <div id="emptyState" class="text-center text-muted mt-5" style="display:none;">
+        <p>這個月還沒有班表喔！<br>點擊右下角按鈕開始安排。</p>
+    </div>
+</div>
+
+<div class="modal fade" id="shiftModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">編輯班表</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="shiftForm">
+                    <input type="hidden" id="shiftId">
+                    <div class="mb-3">
+                        <label class="form-label">日期</label>
+                        <input type="date" class="form-control" id="shiftDate" required>
+                    </div>
+                    
+                    <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#est" type="button">預排班表</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#act" type="button">實際打卡</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="est">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label>預計開始</label>
+                                    <input type="time" class="form-control" id="estStart">
+                                </div>
+                                <div class="col-6">
+                                    <label>預計結束</label>
+                                    <input type="time" class="form-control" id="estEnd">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="act">
+                            <div class="alert alert-light border small p-2">
+                                請填寫實際上下班時間，系統將以此計算最終薪資。
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label>實際上班</label>
+                                    <input type="time" class="form-control" id="actStart">
+                                </div>
+                                <div class="col-6">
+                                    <label>實際下班</label>
+                                    <input type="time" class="form-control" id="actEnd">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger me-auto" onclick="deleteShift()">刪除</button>
+                <button type="button" class="btn btn-primary" onclick="saveShift()">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="batchModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fas fa-bolt"></i> 快速排班</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success small p-2">
+                    選擇日期範圍與星期，一次產生多筆班表。
+                </div>
+                <form id="batchForm">
+                    <div class="mb-3">
+                        <label class="form-label">日期範圍</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" id="batchStartDate" required>
+                            <span class="input-group-text">至</span>
+                            <input type="date" class="form-control" id="batchEndDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label d-block">重複星期 (可多選)</label>
+                        <div class="week-selector d-flex justify-content-center flex-wrap">
+                            <input type="checkbox" id="w1" value="1"><label for="w1">一</label>
+                            <input type="checkbox" id="w2" value="2"><label for="w2">二</label>
+                            <input type="checkbox" id="w3" value="3"><label for="w3">三</label>
+                            <input type="checkbox" id="w4" value="4"><label for="w4">四</label>
+                            <input type="checkbox" id="w5" value="5"><label for="w5">五</label>
+                            <input type="checkbox" id="w6" value="6"><label for="w6">六</label>
+                            <input type="checkbox" id="w0" value="0"><label for="w0">日</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">固定班別時間</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="small text-muted">開始</label>
+                                <input type="time" class="form-control" id="batchStartTime" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="small text-muted">結束</label>
+                                <input type="time" class="form-control" id="batchEndTime" required>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-success" onclick="executeBatch()">開始產生</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="fab-container">
+    <button class="btn btn-success btn-float btn-sub" onclick="openBatchModal()" title="快速排班">
+        <i class="fas fa-bolt"></i>
+    </button>
+    <button class="btn btn-primary btn-float" onclick="openAddModal()" title="新增一筆">
+        <i class="fas fa-plus"></i>
+    </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // --- 系統參數 ---
+    const HOURLY_WAGE = 196;
+    const BREAK_THRESHOLD = 4.5; 
+    const BREAK_DEDUCTION = 0.5; 
+
+    // 2026 勞保級距表 (部分工時模擬)
+    function calculateLaborInsurance(monthlyTotal) {
+        if (monthlyTotal <= 0) return 0;
+        let insuredSalary = 0;
+        if (monthlyTotal <= 11100) insuredSalary = 11100;
+        else if (monthlyTotal <= 12540) insuredSalary = 12540;
+        else if (monthlyTotal <= 13500) insuredSalary = 13500;
+        else if (monthlyTotal <= 15840) insuredSalary = 15840;
+        else if (monthlyTotal <= 16500) insuredSalary = 16500;
+        else if (monthlyTotal <= 17280) insuredSalary = 17280;
+        else if (monthlyTotal <= 17880) insuredSalary = 17880;
+        else if (monthlyTotal <= 19047) insuredSalary = 19047;
+        else if (monthlyTotal <= 20008) insuredSalary = 20008;
+        else insuredSalary = Math.ceil(monthlyTotal / 1000) * 1000;
+
+        // 費率 12% * 自付 20%
+        return Math.round(insuredSalary * 0.12 * 0.2);
+    }
+
+    // --- 資料與狀態 ---
+    let shifts = JSON.parse(localStorage.getItem('shifts_2026')) || [];
+    let currentYear = 2026;
+    let currentMonth = 0; // 0 = Jan
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date();
+        if(today.getFullYear() < 2026) {
+            currentYear = 2026;
+            currentMonth = 0;
+        } else {
+            currentYear = today.getFullYear();
+            currentMonth = today.getMonth();
+        }
+        renderCalendar();
+    });
+
+    function changeMonth(delta) {
+        currentMonth += delta;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        } else if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        renderCalendar();
+    }
+
+    // 計算函數
+    function calcPay(startStr, endStr) {
+        if (!startStr || !endStr) return { hours: 0, pay: 0, billableHours: 0 };
+        
+        const start = new Date(`2000-01-01T${startStr}`);
+        let end = new Date(`2000-01-01T${endStr}`);
+        if (end < start) end.setDate(end.getDate() + 1);
+        
+        let diffMs = end - start;
+        let hours = diffMs / (1000 * 60 * 60);
+        
+        const deductionCount = Math.floor(hours / BREAK_THRESHOLD);
+        const deductionHours = deductionCount * BREAK_DEDUCTION;
+        const billableHours = hours - deductionHours;
+
+        return {
+            billableHours: billableHours,
+            pay: Math.round(billableHours * HOURLY_WAGE)
+        };
+    }
+
+    function renderCalendar() {
+        document.getElementById('currentMonthLabel').innerText = `${currentYear}年 ${(currentMonth + 1).toString().padStart(2, '0')}月`;
+        const listContainer = document.getElementById('shiftList');
+        const emptyState = document.getElementById('emptyState');
+        listContainer.innerHTML = '';
+
+        const monthlyShifts = shifts.filter(s => {
+            const d = new Date(s.date);
+            return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+        });
+
+        // 排序：日期 -> 開始時間
+        monthlyShifts.sort((a, b) => {
+            if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
+            return (a.estStart || '00:00').localeCompare(b.estStart || '00:00');
+        });
+
+        if (monthlyShifts.length === 0) {
+            emptyState.style.display = 'block';
+        } else {
+            emptyState.style.display = 'none';
+        }
+
+        let totalEstPay = 0;
+        let totalActPay = 0;
+
+        monthlyShifts.forEach(shift => {
+            const est = calcPay(shift.estStart, shift.estEnd);
+            const act = calcPay(shift.actStart, shift.actEnd);
+
+            totalEstPay += est.pay;
+            if (shift.actStart && shift.actEnd) {
+                totalActPay += act.pay;
+            }
+
+            const dayName = new Date(shift.date).toLocaleDateString('zh-TW', { weekday: 'short' });
+            const isDone = (shift.actStart && shift.actEnd);
+            const cardClass = isDone ? 'card-shift actual' : 'card-shift';
+            
+            let html = `
+                <div class="card ${cardClass} p-3" onclick="editShift('${shift.id}')">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="m-0">${shift.date.substring(5)} (${dayName})</h5>
+                            <small class="text-muted">
+                                預排: ${shift.estStart || '--'} ~ ${shift.estEnd || '--'} 
+                                <span class="badge bg-light text-dark">計 ${est.billableHours.toFixed(1)}hr</span>
+                            </small>
+                            ${isDone ? `<div class="mt-1"><small class="text-success fw-bold"><i class="fas fa-check"></i> 實際: ${shift.actStart} ~ ${shift.actEnd}</small></div>` : ''}
+                        </div>
+                        <div class="text-end">
+                            <div class="wage-text fs-5">$${isDone ? act.pay : est.pay}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            listContainer.innerHTML += html;
+        });
+
+        const estLabor = calculateLaborInsurance(totalEstPay);
+        const actLabor = calculateLaborInsurance(totalActPay);
+
+        document.getElementById('estNetPay').innerText = `$${totalEstPay - estLabor}`;
+        document.getElementById('estLabor').innerText = estLabor;
+        document.getElementById('actNetPay').innerText = `$${totalActPay - actLabor}`;
+        document.getElementById('actLabor').innerText = actLabor;
+    }
+
+    // Modal 與 資料操作
+    const shiftModal = new bootstrap.Modal(document.getElementById('shiftModal'));
+    const batchModal = new bootstrap.Modal(document.getElementById('batchModal'));
+    let editingId = null;
+
+    function openAddModal() {
+        editingId = null;
+        document.getElementById('shiftForm').reset();
+        document.getElementById('shiftId').value = '';
+        document.getElementById('shiftDate').valueAsDate = new Date(); // 預設今天
+        
+        // 切換到預排分頁
+        const firstTabEl = document.querySelector('#myTab button[data-bs-target="#est"]');
+        bootstrap.Tab.getInstance(firstTabEl)?.show() || new bootstrap.Tab(firstTabEl).show();
+
+        document.querySelector('.btn-danger').style.display = 'none';
+        shiftModal.show();
+    }
+
+    function editShift(id) {
+        editingId = id;
+        const shift = shifts.find(s => s.id === id);
+        if (!shift) return;
+
+        document.getElementById('shiftId').value = shift.id;
+        document.getElementById('shiftDate').value = shift.date;
+        document.getElementById('estStart').value = shift.estStart || '';
+        document.getElementById('estEnd').value = shift.estEnd || '';
+        document.getElementById('actStart').value = shift.actStart || '';
+        document.getElementById('actEnd').value = shift.actEnd || '';
+
+        document.querySelector('.btn-danger').style.display = 'block';
+        shiftModal.show();
+    }
+
+    function saveShift() {
+        const date = document.getElementById('shiftDate').value;
+        if(!date) return alert('請選擇日期');
+
+        const data = {
+            id: editingId || Date.now().toString(),
+            date: date,
+            estStart: document.getElementById('estStart').value,
+            estEnd: document.getElementById('estEnd').value,
+            actStart: document.getElementById('actStart').value,
+            actEnd: document.getElementById('actEnd').value
+        };
+
+        if (editingId) {
+            const index = shifts.findIndex(s => s.id === editingId);
+            shifts[index] = data;
+        } else {
+            shifts.push(data);
+        }
+
+        localStorage.setItem('shifts_2026', JSON.stringify(shifts));
+        shiftModal.hide();
+        renderCalendar();
+    }
+
+    function deleteShift() {
+        if (!editingId) return;
+        if (!confirm('確定要刪除這個班表嗎？')) return;
+        shifts = shifts.filter(s => s.id !== editingId);
+        localStorage.setItem('shifts_2026', JSON.stringify(shifts));
+        shiftModal.hide();
+        renderCalendar();
+    }
+
+    // --- 快速排班 (Batch) 邏輯 ---
+    function openBatchModal() {
+        document.getElementById('batchForm').reset();
+        // 預設日期範圍為當前顯示月份的第一天到最後一天
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        
+        // 格式化為 yyyy-mm-dd
+        const formatDate = (d) => {
+            let month = '' + (d.getMonth() + 1), day = '' + d.getDate(), year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
+
+        document.getElementById('batchStartDate').value = formatDate(firstDay);
+        document.getElementById('batchEndDate').value = formatDate(lastDay);
+        
+        batchModal.show();
+    }
+
+    function executeBatch() {
+        const startStr = document.getElementById('batchStartDate').value;
+        const endStr = document.getElementById('batchEndDate').value;
+        const startTime = document.getElementById('batchStartTime').value;
+        const endTime = document.getElementById('batchEndTime').value;
+        
+        if (!startStr || !endStr || !startTime || !endTime) {
+            alert('請完整填寫日期範圍與時間');
+            return;
+        }
+
+        // 取得勾選的星期
+        const selectedDays = []; // 0=Sun, 1=Mon...
+        document.querySelectorAll('.week-selector input:checked').forEach(el => {
+            selectedDays.push(parseInt(el.value));
+        });
+
+        if (selectedDays.length === 0) {
+            alert('請至少勾選一個星期');
+            return;
+        }
+
+        if (!confirm(`確定要產生從 ${startStr} 到 ${endStr} 的班表嗎？`)) return;
+
+        let curr = new Date(startStr);
+        let end = new Date(endStr);
+        let count = 0;
+
+        while (curr <= end) {
+            if (selectedDays.includes(curr.getDay())) {
+                // 格式化日期 yyyy-mm-dd
+                let month = '' + (curr.getMonth() + 1), day = '' + curr.getDate(), year = curr.getFullYear();
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
+                const dateStr = [year, month, day].join('-');
+
+                // 建立新班表
+                shifts.push({
+                    id: Date.now().toString() + Math.random().toString().substr(2, 5), // 避免ID重複
+                    date: dateStr,
+                    estStart: startTime,
+                    estEnd: endTime,
+                    actStart: '',
+                    actEnd: ''
+                });
+                count++;
+            }
+            curr.setDate(curr.getDate() + 1);
+        }
+
+        localStorage.setItem('shifts_2026', JSON.stringify(shifts));
+        batchModal.hide();
+        renderCalendar();
+        alert(`已成功新增 ${count} 筆班表！`);
+    }
+</script>
+
 </body>
 </html>
